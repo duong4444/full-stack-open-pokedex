@@ -1,6 +1,7 @@
 /* eslint-disable linebreak-style */
 /* eslint-disable no-undef */
 /* eslint-disable quotes */
+//line-break cho windows khác unix
 module.exports = {
   "env": {
     "browser": true,
