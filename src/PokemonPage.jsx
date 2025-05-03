@@ -1,3 +1,6 @@
+/* eslint-disable linebreak-style */
+/* eslint-disable no-console */
+/* eslint-disable linebreak-style */
 import React from 'react'
 import { Link, useParams } from 'react-router-dom'
 import LoadingSpinner from './LoadingSpinner'
