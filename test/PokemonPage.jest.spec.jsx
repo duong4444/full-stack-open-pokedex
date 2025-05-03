@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import axiosMock from 'axios'
@@ -130,5 +131,5 @@ describe('<PokemonPage />', () => {
 
     expect(screen.queryByText('Previous')).toBeNull()
     expect(screen.queryByText('Next')).toBeNull()
-  })  
+  })
 })

@@ -1,3 +1,6 @@
+/* eslint-disable linebreak-style */
+/* eslint-disable no-undef */
+/* eslint-disable quotes */
 module.exports = {
   "env": {
     "browser": true,
@@ -21,8 +24,8 @@ module.exports = {
   "rules": {
     "indent": [
       "error",
-        2
-      ],
+      2
+    ],
     "linebreak-style": [
       "error",
       "unix"
