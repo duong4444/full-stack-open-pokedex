@@ -1,3 +1,5 @@
+/* eslint-disable quotes */
+/* eslint-disable semi */
 import React from 'react'
 import { Link } from 'react-router-dom'
 
