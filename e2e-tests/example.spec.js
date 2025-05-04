@@ -1,3 +1,4 @@
+/* eslint-disable semi */
 // @ts-check
 import { test, expect } from '@playwright/test';
 
