@@ -39,3 +39,4 @@ jobs:
         run: |
           curl "$deploy_url"
           echo "ok"
+          echo "run in ex-branch"
