@@ -33,8 +33,9 @@ jobs:
           path: playwright-report/
           retention-days: 30
       - name: Deploy
-        if: github.ref == 'refs/heads/main'
+        if: ${{ github.event_name == 'push' }}
         env:
           deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
           curl "$deploy_url"
+          echo "ok"
