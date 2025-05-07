@@ -24,6 +24,7 @@ jobs:
         run: |
           npm run build
           echo "log in ex-branch"
+          echo "test"
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Playwright tests
