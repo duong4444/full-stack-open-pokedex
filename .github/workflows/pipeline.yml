@@ -44,7 +44,7 @@ jobs:
           echo "ok"
           echo "run in ex-branch"
   tag_release:
-    needs: [simple_deploy_pipeline]
+    needs: [simple_deployment_pipeline]
     runs-on: ubuntu-22.04
     steps:
       - name: Bump version and push tag
