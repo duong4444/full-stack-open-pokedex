@@ -63,13 +63,13 @@ jobs:
   #không chạy khi pull request     
   tag_release: 
     needs: [simple_deployment_pipeline]
-    if: ${{ github.event_name == 'push' && steps.skip_check.outputs.skip_deploy == 'false' && steps.check_version.outputs.version_bump != '' }}
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4s
         with:
           fetch-depth: '0'
       - name: Bump version and push tag
+        if: ${{ github.event_name == 'push' && steps.skip_check.outputs.skip_deploy == 'false' && steps.check_version.outputs.version_bump != '' }}
         uses: anothrNick/github-tag-action@1.71.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
