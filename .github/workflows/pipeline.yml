@@ -65,12 +65,12 @@ jobs:
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4s
+      - uses: actions/checkout@v4
         with:
           fetch-depth: '0'
       - name: Bump version and push tag
         if: ${{ github.event_name == 'push' && steps.skip_check.outputs.skip_deploy == 'false' && steps.check_version.outputs.version_bump != '' }}
-        uses: anothrNick/github-tag-action@1.71.0
+        uses: anothrNick/github-tag-action@f278d49d30cdd8775cc3e7dd00b5ee11686ee297
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: ${{ steps.check_version.outputs.version_bump }}
