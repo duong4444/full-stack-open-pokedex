@@ -23,8 +23,6 @@ jobs:
       - name: build
         run: |
           npm run build
-          echo "log in ex-branch"
-          echo "test"
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Playwright tests
@@ -35,24 +33,44 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+      - name: Check for skip commit
+        id: skip_check
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == *"#skip"* ]]; then
+            echo "skip_deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip_deploy=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check version bump type
+        id: check_version
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == *"#major"* ]]; then
+            echo "version_bump=major" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event.head_commit.message }}" == *"#minor"* ]]; then
+            echo "version_bump=minor" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event.head_commit.message }}" == *"#patch"* ]]; then
+            echo "version_bump=patch" >> $GITHUB_OUTPUT
+          else
+            echo "version_bump=" >> $GITHUB_OUTPUT  # Không tăng version nếu không có chỉ định
+          fi
+      # không chạy khi pull request
       - name: Deploy
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name == 'push' && steps.skip_check.outputs.skip_deploy == 'false' }}
         env:
           deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
           curl "$deploy_url"
-          echo "ok"
-          echo "run in ex-branch"
-  tag_release:
+  #không chạy khi pull request     
+  tag_release: 
     needs: [simple_deployment_pipeline]
+    if: ${{ github.event_name == 'push' && steps.skip_check.outputs.skip_deploy == 'false' && steps.check_version.outputs.version_bump != '' }}
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4s
         with:
           fetch-depth: '0'
       - name: Bump version and push tag
-        if: ${{ github.event_name == 'push' }}
         uses: anothrNick/github-tag-action@1.71.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEFAULT_BUMP: patch
+          DEFAULT_BUMP: ${{ steps.check_version.outputs.version_bump }}
