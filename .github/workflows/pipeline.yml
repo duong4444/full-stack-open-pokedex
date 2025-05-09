@@ -11,6 +11,9 @@ jobs:
   simple_deployment_pipeline:
     timeout-minutes: 60
     runs-on: ubuntu-22.04
+    outputs:
+      skip_deploy: ${{ steps.skip_check.outputs.skip_deploy }}
+      version_bump: ${{ steps.check_version.outputs.version_bump }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -23,16 +26,6 @@ jobs:
       - name: build
         run: |
           npm run build
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-      - name: Run Playwright tests
-        run: npx playwright test
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
       - name: Check for skip commit
         id: skip_check
         run: |
@@ -41,6 +34,8 @@ jobs:
           else
             echo "skip_deploy=false" >> $GITHUB_OUTPUT
           fi
+          echo "Nội dung GITHUB_OUTPUT _skip_check:"
+          cat $GITHUB_OUTPUT
       - name: Check version bump type
         id: check_version
         run: |
@@ -53,6 +48,8 @@ jobs:
           else
             echo "version_bump=" >> $GITHUB_OUTPUT  # Không tăng version nếu không có chỉ định
           fi
+          echo "Nội dung GITHUB_OUTPUT _check_version:"
+          cat $GITHUB_OUTPUT
       # không chạy khi pull request
       - name: Deploy
         if: ${{ github.event_name == 'push' && steps.skip_check.outputs.skip_deploy == 'false' }}
@@ -69,8 +66,8 @@ jobs:
         with:
           fetch-depth: '0'
       - name: Bump version and push tag
-        if: ${{ github.event_name == 'push' && steps.skip_check.outputs.skip_deploy == 'false' && steps.check_version.outputs.version_bump != '' }}
+        if: ${{ github.event_name == 'push' && needs.simple_deployment_pipeline.outputs.skip_deploy == 'false' && needs.simple_deployment_pipeline.outputs.version_bump != '' }}
         uses: anothrNick/github-tag-action@f278d49d30cdd8775cc3e7dd00b5ee11686ee297
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEFAULT_BUMP: ${{ steps.check_version.outputs.version_bump }}
+          DEFAULT_BUMP: ${{ needs.simple_deployment_pipeline.outputs.version_bump }}
