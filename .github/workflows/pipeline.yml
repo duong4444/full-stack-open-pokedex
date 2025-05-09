@@ -56,4 +56,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
-          CUSTOM_TAG: true
+          CUSTOM_TAG: false
